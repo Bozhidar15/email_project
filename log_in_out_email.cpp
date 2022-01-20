@@ -11,18 +11,119 @@ using namespace std;
 
 string remember_password,remember_username,remember_row;
 bool quit = false;
+
+void reverse(unsigned &number)
+{
+	unsigned number2=0;
+	while (number)
+	{
+		(number2 *= 10) += (number % 10);
+		number /= 10;
+	}
+	number = number2;
+}
 void send()
 {
-	
+
+	char name[256],topic[256],message[256];
+	cout << "Enter recipient:";
+	cin.ignore();
+	cout<<endl;
+	cin.getline(name, 256);
+	cout << "Enter topic:";
+	cout << endl;
+	cin.getline(topic,256);
+	cout << "Enter the message:";
+	cout << endl;
+	cin.getline(message, 256);
+	string row;
+	ifstream log;
+	log.open("users.txt");
+	if (log.fail()) {
+		cout << "error opening file" << endl;
+		exit(1);
+	}
+	while (log >> row)
+	{
+		unsigned len = row.length(), i = 0, p = 0;
+		while (row[p] != ':')
+		{
+			p++;
+		}
+		char username_check1[256];
+		for (; i < p; i++)
+		{
+			username_check1[i] = row[i];
+		}
+		username_check1[p] = '\0';
+		bool equel = true;
+		unsigned len_name = strlen(name);
+		if (len_name != p)
+		{
+			equel = false;
+		}
+		else {
+			for (unsigned i = 0; i < p; i++)
+			{
+				if (username_check1[i] != name[i])
+				{
+					equel = false;
+					break;
+				}
+			}
+		}
+		if (equel)
+		{
+			//log.close();
+			//delete[] username_check1;
+			char read[]= "\\info.txt",name_copy[256];
+			strcpy(name_copy, name);
+			strcat(name, read);
+			ifstream get_info;
+			get_info.open(name);
+			unsigned count;
+			get_info >> count;
+			count++;
+			get_info.close();
+			fstream change;
+			change.open(name, fstream::out | fstream::trunc);
+			change << count;
+			change.close();
+			char number_file[256],txt[]=".txt",middle[]="\\";
+			string tmp = to_string(count);
+			char const* num_char = tmp.c_str();
+			cout << num_char << endl;
+			strcpy(number_file,num_char);
+			unsigned needed_len = strlen(number_file);
+			number_file[needed_len] = '\0';
+			cout << number_file<<endl;
+			strcat(number_file,txt);
+			strcat(name_copy,middle);
+			strcat(name_copy,number_file);
+			ofstream topic_mess;
+			topic_mess.open(name_copy);
+			topic_mess << topic << endl << message;
+			topic_mess.close();
+			cout << "The email has been sent." << endl;
+		}
+			
+	}
+	log.close();
 }
 void createFolder(const char* username)
 {
-	char temp[256], add[] = "/";
+	char temp[256], add[256] = "\\",info[]="\\info.txt";
 	strcat(add, username);
+	//cout << add<<endl;
 	_getcwd(temp, 256);
 	strcat(temp, add);
 	//cout << "Current working directory: " << temp << endl;
 	_mkdir(temp);
+	strcat(temp, info);
+	ofstream inf;
+	inf.open(temp);
+	inf << 0;
+	inf.close();
 	
 }
 void close_acc()
@@ -238,42 +339,20 @@ void registration()
 		cout << "Incorrect data! Try again.." << endl;
 		return registration();
 	}
+	char* user=new char[username1.size()+1];
+	unsigned i = 0;
+	while (username1[i]!='\0')
+	{
+		user[i] = username1[i];
+		i++;
+	}
+	user[i] = '\0';
+	createFolder(user);
+	delete[] user;
 	remember_password = reg_pass(username1);
 	remember_username = username1;
 	username_and_pass << username1 << ":" << remember_password<<"\n";
-
 	username_and_pass.close();
-}
-void start()
-{
-	cout << "Select one of the following." << endl;
-	cout << "L - login" << endl;
-	cout << "R - register" << endl;
-	cout << "Q - quit" << endl;
-	char select;
-	cin >> select;
-	switch (select)
-	{
-	case 'L':
-	case 'l':
-		system("cls");
-		login();
-		break;
-	case 'R':
-	case 'r':
-		system("cls");
-		registration();
-		break;
-	case 'Q':
-	case 'q':
-		system("cls");
-		quit= true;
-		break;
-	default:
-		cout << "Incorrect data! Try again.." << endl;
-		return start();
-		break;
-	}
 }
 void inside()
 {
@@ -291,12 +370,12 @@ void inside()
 	case 'I':
 	case 'i':
 		system("cls");
-		
+
 		break;
 	case 'L':
 	case 'l':
 		system("cls");
-		return start();
+		//return start();
 		break;
 	case 'O':
 	case 'o':
@@ -305,11 +384,45 @@ void inside()
 	case 'S':
 	case's':
 		system("cls");
+		send();
 		break;
 	default:
 		system("cls");
 		cout << "Incorrect data! Try again.." << endl;
 		return inside();
+		break;
+	}
+}
+void start()
+{
+	cout << "Select one of the following." << endl;
+	cout << "L - login" << endl;
+	cout << "R - register" << endl;
+	cout << "Q - quit" << endl;
+	char select;
+	cin >> select;
+	switch (select)
+	{
+	case 'L':
+	case 'l':
+		system("cls");
+		login();
+		inside();
+		break;
+	case 'R':
+	case 'r':
+		system("cls");
+		registration();
+		inside();
+		break;
+	case 'Q':
+	case 'q':
+		system("cls");
+		quit= true;
+		break;
+	default:
+		cout << "Incorrect data! Try again.." << endl;
+		return start();
 		break;
 	}
 }
@@ -319,6 +432,6 @@ int main()
 	start();
 	if (quit)
 		return -1;
-	inside();
+	//inside();
 	return 0;
 }
