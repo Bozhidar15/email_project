@@ -12,19 +12,129 @@ using namespace std;
 string remember_password,remember_username,remember_row;
 bool quit = false;
 
-void reverse(unsigned &number)
+char* create_directory(int number,char* name)
 {
-	unsigned number2=0;
+	char txt[] = ".txt",digit[256],middle[]="\\";
+	string tmp = to_string(number);
+	char const* num_char = tmp.c_str();
+	strcpy(digit, num_char);
+	digit[strlen(digit)] = '\0';
+	strcat(digit,txt);
+	strcat(name, middle);
+	strcat(name, digit);
+	return name;
+}
+void open()
+{
+	cout << "Enter the ID of wanted email" << endl;
+	
+	char read[] = "\\info.txt",final[256];
+	unsigned ln = remember_username.length(),digit;
+	for (unsigned i = 0; i < ln; i++)
+	{
+		final[i] = remember_username[i];
+	}final[ln] = '\0';
+	strcat(final, read);
+	ifstream info_num;
+	info_num.open(final);
+	info_num >> digit;
+	info_num.close();
+	cout << "from 1 to " << digit << endl;
+	int number;
+	cin >> number;
+	if (number < 1||number>digit)
+		return open();
+	unsigned len = remember_username.length();
+	char name[256];
+	for (unsigned i = 0; i < len; i++)
+	{
+		name[i] = remember_username[i];
+	}name[len] = '\0';
+	char dir[256];
+	strcpy(dir, create_directory(number, name));
+	//delete[] name;
+	string row;
+	ifstream open_inf;
+	open_inf.open(dir);
+	getline(open_inf, row);
+	cout << "From:"<<row<<endl;
+	getline(open_inf, row);
+	cout << "Subject:" << row<<endl;
+	getline(open_inf, row);
+	cout << "Content:" << row<<endl;
+	cout << "Do you want to open another one Y/N:";
+	char ans;
+	cin >> ans;
+	if (ans == 'Y' || ans == 'y')
+	{
+		system("cls");
+		return open();
+	}
+	system("cls");
+}
+void inbox(unsigned number)
+{
+
+	/*ifstream my_dir;
+	char after[] = "\\info.text", direction[256];
+	unsigned len = remember_username.length(),i=0;
+	for (; i < len; i++)
+	{
+		direction[i] = remember_username[i];
+	}
+	direction[i] = '\0';
+	strcat(direction,after);
+	my_dir.open(direction);
+	unsigned number, counter = 0;
+	my_dir >> number;
+	my_dir.close();*/
+	unsigned counter = 0;
 	while (number)
 	{
-		(number2 *= 10) += (number % 10);
-		number /= 10;
+		if (counter==number)
+		{
+			break;
+		}
+		counter++;
+		unsigned len = remember_username.length();
+		//char* name = new char[len + 1];
+		char name[256];
+		for (unsigned i = 0; i < len; i++)
+		{
+			name[i] = remember_username[i];
+		}name[len] = '\0';
+		char all[256];
+		strcpy(all, create_directory(counter,name));
+		//delete[] name;
+		ifstream read_topic;
+		read_topic.open(all);
+		string topic,row;
+		for (unsigned z = 0; z < 2; z++)
+		{
+			getline(read_topic, row);
+			if (z == 1)
+			{
+				cout << counter << ". " << row<<endl;
+				break;
+			}
+		}
+		read_topic.close();
 	}
-	number = number2;
+	cout << "Do you want to read one of them Y/N:";
+	char ans;
+	cin >> ans;
+	if (ans=='Y'||ans=='y')
+	{
+		system("cls");
+		return open();
+	}
+	else
+	{
+		system("cls");
+	}
 }
 void send()
 {
-
 	char name[256],topic[256],message[256];
 	cout << "Enter recipient:";
 	cin.ignore();
@@ -74,14 +184,14 @@ void send()
 		}
 		if (equel)
 		{
-			//log.close();
-			//delete[] username_check1;
-			char read[]= "\\info.txt",name_copy[256];
+			//entered name
+			char read[] = "\\info.txt";
+			char name_copy[256];
 			strcpy(name_copy, name);
 			strcat(name, read);
 			ifstream get_info;
 			get_info.open(name);
-			unsigned count;
+			int count;
 			get_info >> count;
 			count++;
 			get_info.close();
@@ -89,22 +199,25 @@ void send()
 			change.open(name, fstream::out | fstream::trunc);
 			change << count;
 			change.close();
-			char number_file[256],txt[]=".txt",middle[]="\\";
-			string tmp = to_string(count);
-			char const* num_char = tmp.c_str();
-			cout << num_char << endl;
-			strcpy(number_file,num_char);
-			unsigned needed_len = strlen(number_file);
-			number_file[needed_len] = '\0';
-			cout << number_file<<endl;
-			strcat(number_file,txt);
-			strcat(name_copy,middle);
-			strcat(name_copy,number_file);
+			char dir[256];
+			strcpy(dir,create_directory(count,name_copy));
+			//char number_file[256],txt[]=".txt",middle[]="\\";
+			//string tmp = to_string(count);
+			//char const* num_char = tmp.c_str();
+			////cout << num_char << endl;
+			//strcpy(number_file,num_char);
+			//unsigned needed_len = strlen(number_file);
+			//number_file[needed_len] = '\0';
+			////cout << number_file<<endl;
+			//strcat(number_file,txt);
+			//strcat(name_copy,middle);
+			//strcat(name_copy,number_file);
 			ofstream topic_mess;
-			topic_mess.open(name_copy);
-			topic_mess << topic << endl << message;
+			topic_mess.open(dir);
+			topic_mess <<remember_username <<endl<<topic << endl << message;
 			topic_mess.close();
 			cout << "The email has been sent." << endl;
+			break;
 		}
 			
 	}
@@ -120,9 +233,10 @@ void createFolder(const char* username)
 	//cout << "Current working directory: " << temp << endl;
 	_mkdir(temp);
 	strcat(temp, info);
+	int num = 0;
 	ofstream inf;
 	inf.open(temp);
-	inf << 0;
+	inf << num;
 	inf.close();
 	
 }
@@ -356,7 +470,22 @@ void registration()
 }
 void inside()
 {
-	cout << "You have " << "X" << " mails. Choose one of the following options:" << endl;
+	ifstream my_dir;
+	char after[] = "\\info.txt", direction[256];
+	unsigned len = remember_username.length(), i = 0;
+	for (; i < len; i++)
+	{
+		direction[i] = remember_username[i];
+	}
+	direction[i] = '\0';
+	strcat(direction, after);
+	my_dir.open(direction);
+	int number, counter = 0;
+	//string row;
+	my_dir >> number;
+	my_dir.close();
+	//number of "X"
+	cout << "You have " << number << " mails. Choose one of the following options:" << endl;
 	cout << "C - close account\nI - inbox\nL - logout\nO - open\nS - send" << endl;
 	char select;
 	cin >> select;
@@ -366,11 +495,13 @@ void inside()
 	case 'c':
 		system("cls");
 		close_acc();
+		return inside();
 		break;
 	case 'I':
 	case 'i':
 		system("cls");
-
+		inbox(number);
+		return inside();
 		break;
 	case 'L':
 	case 'l':
@@ -380,11 +511,14 @@ void inside()
 	case 'O':
 	case 'o':
 		system("cls");
+		open();
+		return inside();
 		break;
 	case 'S':
 	case's':
 		system("cls");
 		send();
+		return inside();
 		break;
 	default:
 		system("cls");
@@ -392,6 +526,7 @@ void inside()
 		return inside();
 		break;
 	}
+	
 }
 void start()
 {
@@ -408,12 +543,14 @@ void start()
 		system("cls");
 		login();
 		inside();
+		return start();
 		break;
 	case 'R':
 	case 'r':
 		system("cls");
 		registration();
 		inside();
+		return start();
 		break;
 	case 'Q':
 	case 'q':
@@ -432,6 +569,5 @@ int main()
 	start();
 	if (quit)
 		return -1;
-	//inside();
 	return 0;
 }
