@@ -8,7 +8,7 @@
 #include <filesystem>
 #pragma warning(disable : 4996)
 using namespace std;
-
+// system - polzvane
 string remember_password,remember_username,remember_row;
 bool quit = false;
 
@@ -238,7 +238,6 @@ void createFolder(const char* username)
 	inf.open(temp);
 	inf << num;
 	inf.close();
-	
 }
 void close_acc()
 {
@@ -246,7 +245,8 @@ void close_acc()
 	cout << "confirm your password:";
 	string entered_password,row;
 	cin >> entered_password;
-	
+	hash<string> Password;
+	entered_password = to_string(Password(entered_password));
 	if (entered_password==remember_password)
 	{
 		ifstream users;
@@ -263,6 +263,10 @@ void close_acc()
 		users1.close();
 		remove("users.txt");
 		rename("users1.txt", "users.txt");
+		
+		
+		string a = "rmdir /s /q " + remember_username;
+		system(a.c_str());
 		
 	}
 	else
@@ -318,6 +322,8 @@ void login()
 		}
 		password_check1[z] = '\0';
 		//cout << password_check1;
+		hash<string> Password;
+		entered_pass = to_string(Password(entered_pass));
 		if (username_check1 == entered_user && password_check1 == entered_pass) {//if (username_check == entered_user && password_check == entered_pass) {
 			cout << "user found!" << endl;
 			happened = true;
@@ -396,6 +402,21 @@ string reg_pass(const string& user)
 	cout << "password:";
 	string password1;
 	cin >> password1;
+	/*
+	string password = "Bozhidar*1", pass;
+	//cin>>password;
+	hash<string> hashedPassword;
+	password1 = to_string(hashedPassword(password1));
+	cout << password << endl;
+	cin >> pass;
+	hash<string> Password;
+	pass = to_string(Password(pass));
+	cout << pass << endl;
+	if (pass == password)
+	{
+		cout << "da";
+	}
+	*/
 	bool requirements = true;
 	if (password1[0] == '\0')
 	{
@@ -439,6 +460,8 @@ string reg_pass(const string& user)
 		cout << "Incorrect data! Try again.." << endl;
 		return reg_pass(user);
 	}
+	hash<string> hashedPassword;
+	password1 = to_string(hashedPassword(password1));
 	return password1;
 }
 void registration()
@@ -495,7 +518,7 @@ void inside()
 	case 'c':
 		system("cls");
 		close_acc();
-		return inside();
+		//return inside();
 		break;
 	case 'I':
 	case 'i':
