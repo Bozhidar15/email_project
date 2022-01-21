@@ -6,24 +6,15 @@
 #include <vector>
 #include <direct.h>
 #include <filesystem>
+#include "createF.h"
+#include "createDir.h"
 #pragma warning(disable : 4996)
 using namespace std;
 // system - polzvane
 string remember_password,remember_username,remember_row;
 bool quit = false;
 
-char* create_directory(int number,char* name)
-{
-	char txt[] = ".txt",digit[256],middle[]="\\";
-	string tmp = to_string(number);
-	char const* num_char = tmp.c_str();
-	strcpy(digit, num_char);
-	digit[strlen(digit)] = '\0';
-	strcat(digit,txt);
-	strcat(name, middle);
-	strcat(name, digit);
-	return name;
-}
+
 void open()
 {
 	cout << "Enter the ID of wanted email" << endl;
@@ -223,22 +214,7 @@ void send()
 	}
 	log.close();
 }
-void createFolder(const char* username)
-{
-	char temp[256], add[256] = "\\",info[]="\\info.txt";
-	strcat(add, username);
-	//cout << add<<endl;
-	_getcwd(temp, 256);
-	strcat(temp, add);
-	//cout << "Current working directory: " << temp << endl;
-	_mkdir(temp);
-	strcat(temp, info);
-	int num = 0;
-	ofstream inf;
-	inf.open(temp);
-	inf << num;
-	inf.close();
-}
+
 void close_acc()
 {
 	//da se iztriqt vsichi failove
@@ -289,6 +265,8 @@ void login()
 		cout << "error opening file" << endl;
 		exit(1);
 	}
+	hash<string> Password;
+	entered_pass = to_string(Password(entered_pass));
 	bool happened = false; 
 	while (log >> row) 
 	{
@@ -322,8 +300,7 @@ void login()
 		}
 		password_check1[z] = '\0';
 		//cout << password_check1;
-		hash<string> Password;
-		entered_pass = to_string(Password(entered_pass));
+		
 		if (username_check1 == entered_user && password_check1 == entered_pass) {//if (username_check == entered_user && password_check == entered_pass) {
 			cout << "user found!" << endl;
 			happened = true;
@@ -484,6 +461,7 @@ void registration()
 		i++;
 	}
 	user[i] = '\0';
+
 	createFolder(user);
 	delete[] user;
 	remember_password = reg_pass(username1);
