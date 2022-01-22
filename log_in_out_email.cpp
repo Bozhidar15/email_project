@@ -10,10 +10,18 @@
 #include "createDir.h"
 #pragma warning(disable : 4996)
 using namespace std;
-// system - polzvane
+// if you are using linux these are the lines where I am using "system" function:
+// line 68
+// line 71
+// line 110
+// line 115
+// line 223
+// line 287
+// line 447 , 452 , 458 , 462 , 468 , 473
+// line 492 , 499 , 506
+
 string remember_password,remember_username,remember_row;
 bool quit = false;
-
 
 void open()
 {
@@ -43,7 +51,6 @@ void open()
 	}name[len] = '\0';
 	char dir[256];
 	strcpy(dir, create_directory(number, name));
-	//delete[] name;
 	string row;
 	ifstream open_inf;
 	open_inf.open(dir);
@@ -65,20 +72,6 @@ void open()
 }
 void inbox(unsigned number)
 {
-
-	/*ifstream my_dir;
-	char after[] = "\\info.text", direction[256];
-	unsigned len = remember_username.length(),i=0;
-	for (; i < len; i++)
-	{
-		direction[i] = remember_username[i];
-	}
-	direction[i] = '\0';
-	strcat(direction,after);
-	my_dir.open(direction);
-	unsigned number, counter = 0;
-	my_dir >> number;
-	my_dir.close();*/
 	unsigned counter = 0;
 	while (number)
 	{
@@ -88,7 +81,6 @@ void inbox(unsigned number)
 		}
 		counter++;
 		unsigned len = remember_username.length();
-		//char* name = new char[len + 1];
 		char name[256];
 		for (unsigned i = 0; i < len; i++)
 		{
@@ -96,7 +88,6 @@ void inbox(unsigned number)
 		}name[len] = '\0';
 		char all[256];
 		strcpy(all, create_directory(counter,name));
-		//delete[] name;
 		ifstream read_topic;
 		read_topic.open(all);
 		string topic,row;
@@ -175,7 +166,6 @@ void send()
 		}
 		if (equel)
 		{
-			//entered name
 			char read[] = "\\info.txt";
 			char name_copy[256];
 			strcpy(name_copy, name);
@@ -192,17 +182,6 @@ void send()
 			change.close();
 			char dir[256];
 			strcpy(dir,create_directory(count,name_copy));
-			//char number_file[256],txt[]=".txt",middle[]="\\";
-			//string tmp = to_string(count);
-			//char const* num_char = tmp.c_str();
-			////cout << num_char << endl;
-			//strcpy(number_file,num_char);
-			//unsigned needed_len = strlen(number_file);
-			//number_file[needed_len] = '\0';
-			////cout << number_file<<endl;
-			//strcat(number_file,txt);
-			//strcat(name_copy,middle);
-			//strcat(name_copy,number_file);
 			ofstream topic_mess;
 			topic_mess.open(dir);
 			topic_mess <<remember_username <<endl<<topic << endl << message;
@@ -217,7 +196,6 @@ void send()
 
 void close_acc()
 {
-	//da se iztriqt vsichi failove
 	cout << "confirm your password:";
 	string entered_password,row;
 	cin >> entered_password;
@@ -253,7 +231,6 @@ void close_acc()
 }
 void login()
 {
-	//username.eof()- end of file
 	ifstream log;
 	log.open("users.txt");
 	string username_check, password_check,entered_user,entered_pass,row;
@@ -277,31 +254,22 @@ void login()
 		{
 			p++;
 		}
-		//unsigned formassive1 = p + 1,formassive2=len-p;
 		char* username_check1 = new char[p+1];
 		char* password_check1 = new char[len-p];
-		for (; i < p;i++ )//for (; i < len ;i++ )
+		for (; i < p;i++ )
 		{
-			//username_check[i] = row[i];
 			username_check1[i] = row[i];
-			/*if (row[i+1] == ':')
-			{
-				break;
-			}*/
 		}
 		username_check1[p] = '\0';
 		i += 1;
-		//cout << username_check1;
 		for (; i < len; i++)
 		{
-			//password_check[z] = row[i];
 			password_check1[z] = row[i];
 			z++;
 		}
 		password_check1[z] = '\0';
-		//cout << password_check1;
 		
-		if (username_check1 == entered_user && password_check1 == entered_pass) {//if (username_check == entered_user && password_check == entered_pass) {
+		if (username_check1 == entered_user && password_check1 == entered_pass) {
 			cout << "user found!" << endl;
 			happened = true;
 			remember_row = row;
@@ -374,26 +342,10 @@ bool check_username_registration(string& username)
 }
 string reg_pass(const string& user)
 {
-	//system("cls");
 	cout << "username:"<<user<<endl;
 	cout << "password:";
 	string password1;
 	cin >> password1;
-	/*
-	string password = "Bozhidar*1", pass;
-	//cin>>password;
-	hash<string> hashedPassword;
-	password1 = to_string(hashedPassword(password1));
-	cout << password << endl;
-	cin >> pass;
-	hash<string> Password;
-	pass = to_string(Password(pass));
-	cout << pass << endl;
-	if (pass == password)
-	{
-		cout << "da";
-	}
-	*/
 	bool requirements = true;
 	if (password1[0] == '\0')
 	{
@@ -482,10 +434,8 @@ void inside()
 	strcat(direction, after);
 	my_dir.open(direction);
 	int number, counter = 0;
-	//string row;
 	my_dir >> number;
 	my_dir.close();
-	//number of "X"
 	cout << "You have " << number << " mails. Choose one of the following options:" << endl;
 	cout << "C - close account\nI - inbox\nL - logout\nO - open\nS - send" << endl;
 	char select;
@@ -496,7 +446,6 @@ void inside()
 	case 'c':
 		system("cls");
 		close_acc();
-		//return inside();
 		break;
 	case 'I':
 	case 'i':
@@ -507,7 +456,6 @@ void inside()
 	case 'L':
 	case 'l':
 		system("cls");
-		//return start();
 		break;
 	case 'O':
 	case 'o':
